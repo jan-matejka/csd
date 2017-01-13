@@ -191,17 +191,19 @@ class Html5Parser {
 /**
  * Downloaded file
  */
+
 class File {
     public:
-    string url;
-    string data;
+    const string url;
+    const string data;
+    const string adler32hex;
 
-    File(const string url, const string data) : url(url), data(data) {}
-    set<string> parse_urls() {
-        return Html5Parser(data, url).urls;
-    }
+    File(const string url) : url(url), data(download_url(url)),
+        adler32hex(mk_hash())
+    {}
 
-    string hash() const {
+    private:
+    string mk_hash() const {
         Adler32 hash;
         string hex;
         StringSource ss(data, true,
@@ -212,9 +214,8 @@ class File {
 
         return hex;
     }
-};
 
-File download_url(const string url) {
+    string download_url(const string url) {
         stringstream out;
 
         curlpp::Cleanup cleanup;
@@ -226,8 +227,21 @@ File download_url(const string url) {
 
         request.perform();
 
-        return File(url, out.str());
-}
+        return out.str();
+    }
+};
+
+class OriginUrl : public File {
+    public:
+    const set<string> urls;
+
+    OriginUrl(const string url) : File(url), urls(parse_urls()) {}
+
+    private:
+    set<string> parse_urls() {
+        return Html5Parser(data, url).urls;
+    }
+};
 
 int main(int argc, char* argv[]) {
     if (argc != 2) {
@@ -235,17 +249,15 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-
     try {
-        auto origin = download_url(argv[1]);
-        auto urls = origin.parse_urls();
+        auto origin = OriginUrl(argv[1]);
 
-        for (const auto &x : urls) {
-            const auto file = download_url(x);
+        for (const auto &x : origin.urls) {
+            const auto file = File(x);
 
             cout
                 << setw(50) << file.url
-                << setw(10) << file.hash()
+                << setw(10) << file.adler32hex
                 << endl;
         }
     }catch ( const exception& e ) {
