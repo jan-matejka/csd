@@ -237,6 +237,17 @@ class OriginUrl : public File {
 
     OriginUrl(const string url) : File(url), urls(parse_urls()) {}
 
+    void download_files() {
+        for (const auto &x : urls) {
+            const auto file = File(x);
+
+            cout
+                << setw(50) << file.url
+                << setw(10) << file.adler32hex
+                << endl;
+        }
+    }
+
     private:
     set<string> parse_urls() {
         return Html5Parser(data, url).urls;
@@ -251,15 +262,7 @@ int main(int argc, char* argv[]) {
 
     try {
         auto origin = OriginUrl(argv[1]);
-
-        for (const auto &x : origin.urls) {
-            const auto file = File(x);
-
-            cout
-                << setw(50) << file.url
-                << setw(10) << file.adler32hex
-                << endl;
-        }
+        origin.download_files();
     }catch ( const exception& e ) {
         std::cerr << e.what() << std::endl;
         return 1;
