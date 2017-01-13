@@ -5,8 +5,13 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <set>
 
 #include <boost/algorithm/string/predicate.hpp>
+
+#include <cryptopp/adler32.h>
+#include <cryptopp/filters.h>
+#include <cryptopp/hex.h>
 
 #include <curlpp/cURLpp.hpp>
 #include <curlpp/Easy.hpp>
@@ -17,6 +22,7 @@
 #include <uriparser/Uri.h>
 
 using namespace std;
+using namespace CryptoPP;
 
 class UriParseFailure : public runtime_error {
     public:
@@ -194,6 +200,18 @@ class File {
     set<string> parse_urls() {
         return Html5Parser(data, url).urls;
     }
+
+    string hash() const {
+        Adler32 hash;
+        string hex;
+        StringSource ss(data, true,
+            new HashFilter(hash,
+                new HexEncoder(new StringSink( hex ))
+            )
+        );
+
+        return hex;
+    }
 };
 
 File download_url(const string url) {
@@ -217,12 +235,18 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+
     try {
         auto origin = download_url(argv[1]);
         auto urls = origin.parse_urls();
 
         for (const auto &x : urls) {
-            cout << x << endl;
+            const auto file = download_url(x);
+
+            cout
+                << setw(50) << file.url
+                << setw(10) << file.hash()
+                << endl;
         }
     }catch ( const exception& e ) {
         std::cerr << e.what() << std::endl;

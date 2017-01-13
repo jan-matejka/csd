@@ -8,6 +8,7 @@ csd: csd.cpp GNUmakefile
 
 	$(C++) $(CFLAGS) \
 		-lcurl \
+		$(shell pkg-config --cflags --libs libcrypto++) \
 		$(shell pkg-config --cflags --libs gumbo) \
 		$(shell pkg-config --cflags --libs liburiparser) \
 		$(shell pkg-config --cflags --libs curlpp) \
