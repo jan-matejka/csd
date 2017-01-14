@@ -17,6 +17,7 @@ class File {
     const string adler32hex;
 
     File(const string url);
+    bool static size_cmp(File, File);
 
     private:
     string download_url(const string url) const;

@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <iomanip>
 #include <iostream>
 
@@ -13,12 +14,24 @@ int main(int argc, char* argv[]) {
 
     try {
         auto origin = OriginUrl(argv[1]);
-        for(auto &file : origin.fetch_files()) {
+        auto files = origin.fetch_files();
+        for(auto &file : files) {
             cout
                 << setw(80) << file.url
                 << setw(10) << file.adler32hex
                 << endl;
         }
+
+        auto minf = *min_element(files.begin(), files.end(),
+            File::size_cmp);
+        auto maxf = *max_element(files.begin(), files.end(),
+            File::size_cmp);
+
+        cout
+            << "Min: " << setw(6) << minf.data.size()
+                << " " << minf.url << endl
+            << "Max: " << setw(6) << maxf.data.size()
+                << " " << maxf.url << endl;
     }catch ( const exception& e ) {
         std::cerr << e.what() << std::endl;
         return 1;

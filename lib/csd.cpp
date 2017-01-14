@@ -206,6 +206,10 @@ string File::mk_hash() const {
     return hex;
 }
 
+bool File::size_cmp(File x, File y) {
+    return x.data.size() < y.data.size();
+}
+
 string File::download_url(const string url) const {
     stringstream out;
 
@@ -242,6 +246,7 @@ vector<File> OriginUrl::fetch_files() {
             }
         }
     }
+
 
     return files;
 }
