@@ -4,11 +4,11 @@ C++ ?= g++
 .PHONY: build
 build:
 
-	make -C lib/ $@
-	make -C src/ $@
+	$(MAKE) -C lib/ $@
+	$(MAKE) -C src/ $@
 
 .PHONY: install
 install:
 
-	make -C lib/ $@
-	make -C src/ $@
+	$(MAKE) -C lib/ $@
+	$(MAKE) -C src/ $@
