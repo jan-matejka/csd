@@ -238,28 +238,27 @@ class OriginUrl : public File {
 
     OriginUrl(const string url) : File(url), urls(parse_urls()) {}
 
-    void download_files() {
-        vector<future<File>> fs;
+    vector<File> fetch_files() {
+        vector<future<File>> futures;
 
         for (const auto &x : urls) {
             auto f(std::async([] (string url) -> File
                 { return File(url); }, x));
-            fs.push_back(move(f));
+            futures.push_back(move(f));
         }
 
-        while (fs.size() > 0 ) {
-            for(unsigned int i = 0; i < fs.size(); i++) {
-                if (fs[i].valid()) {
-                    auto file = fs[i].get();
-                    cout
-                        << setw(50) << file.url
-                        << setw(10) << file.adler32hex
-                        << endl;
+        vector<File> files;
 
-                    fs.erase(fs.begin() + i);
+        while (futures.size() > 0 ) {
+            for(unsigned int i = 0; i < futures.size(); i++) {
+                if (futures[i].valid()) {
+                    files.push_back(futures[i].get());
+                    futures.erase(futures.begin() + i);
                 }
             }
         }
+
+        return files;
     }
 
     private:
@@ -276,7 +275,12 @@ int main(int argc, char* argv[]) {
 
     try {
         auto origin = OriginUrl(argv[1]);
-        origin.download_files();
+        for(auto &file : origin.fetch_files()) {
+            cout
+                << setw(80) << file.url
+                << setw(10) << file.adler32hex
+                << endl;
+        }
     }catch ( const exception& e ) {
         std::cerr << e.what() << std::endl;
         return 1;
