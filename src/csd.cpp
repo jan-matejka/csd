@@ -1,4 +1,5 @@
 #include <fstream>
+#include <future>
 #include <iomanip>
 #include <set>
 #include <sstream>
@@ -238,13 +239,26 @@ class OriginUrl : public File {
     OriginUrl(const string url) : File(url), urls(parse_urls()) {}
 
     void download_files() {
-        for (const auto &x : urls) {
-            const auto file = File(x);
+        vector<future<File>> fs;
 
-            cout
-                << setw(50) << file.url
-                << setw(10) << file.adler32hex
-                << endl;
+        for (const auto &x : urls) {
+            auto f(std::async([] (string url) -> File
+                { return File(url); }, x));
+            fs.push_back(move(f));
+        }
+
+        while (fs.size() > 0 ) {
+            for(unsigned int i = 0; i < fs.size(); i++) {
+                if (fs[i].valid()) {
+                    auto file = fs[i].get();
+                    cout
+                        << setw(50) << file.url
+                        << setw(10) << file.adler32hex
+                        << endl;
+
+                    fs.erase(fs.begin() + i);
+                }
+            }
         }
     }
 
