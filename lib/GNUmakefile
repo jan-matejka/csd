@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := build
-C++ ?= g++
+CXX ?= c++
 
 PREFIX ?= /usr/local
 LIBDIR ?= $(PREFIX)/lib
@@ -9,7 +9,7 @@ build: libcsd.so
 
 libcsd.so: csd.cpp GNUmakefile
 
-	$(C++) -std=gnu++11 $(CFLAGS) \
+	$(CXX) -std=gnu++11 $(CFLAGS) \
 		-fPIC \
 		-lcurl \
 		-lpthread \

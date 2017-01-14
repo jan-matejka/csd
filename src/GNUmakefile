@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := build
-C++ ?= g++
+CXX ?= c++
 
 PREFIX ?= /usr/local
 BINDIR ?= $(PREFIX)/bin
@@ -9,7 +9,7 @@ build: csd
 
 csd: csd.cpp GNUmakefile
 
-	$(C++) -std=gnu++11 $(CFLAGS) \
+	$(CXX) -std=gnu++11 $(CFLAGS) \
 		-L../lib -I../lib -lcsd \
 		-Wl,-rpath='$$ORIGIN/../lib' \
 		-Wall -Wextra $< -o $@

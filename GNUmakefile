@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := build
-C++ ?= g++
+CXX ?= c++
 
 .PHONY: build
 build:
