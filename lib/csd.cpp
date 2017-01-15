@@ -205,8 +205,12 @@ class Html5Parser {
 };
 
 File::File(const string url) : url(url), data(File::download_url(url)),
-    adler32hex(File::mk_hash())
+    adler32hex(File::mk_hash()), name(File::mk_fname())
 {}
+
+string File::mk_fname() const {
+    return url.substr(url.find_last_of('/')+1);
+}
 
 string File::mk_hash() const {
     Adler32 hash;

@@ -26,6 +26,11 @@ class File {
     const string adler32hex;
 
     /**
+     * File name
+     */
+    const string name;
+
+    /**
      * Downloads and hashes the file from `url`
      */
     File(const string url);
@@ -38,6 +43,7 @@ class File {
     private:
     string download_url(const string url) const;
     string mk_hash() const;
+    string mk_fname() const;
 };
 
 class OriginUrl : public File {
