@@ -12,12 +12,28 @@ using namespace std;
  */
 class File {
     public:
+    /**
+     * Source url
+     */
     const string url;
+    /**
+     * Data received from url
+     */
     const string data;
+    /**
+     * Adler 32 hash of `data` in hex format
+     */
     const string adler32hex;
 
+    /**
+     * Downloads and hashes the file from `url`
+     */
     File(const string url);
-    bool static size_cmp(File, File);
+
+    /**
+     * \returns true if data of x < data of y
+     */
+    bool static size_cmp(File x, File y);
 
     private:
     string download_url(const string url) const;
@@ -30,6 +46,10 @@ class OriginUrl : public File {
 
     OriginUrl(const string url);
 
+    /**
+     * \returns Files found in this file/url. fetches the files in
+     *    parallel, blocks until are files are received.
+     */
     vector<File> fetch_files();
 
     private:
