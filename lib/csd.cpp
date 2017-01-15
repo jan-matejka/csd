@@ -159,8 +159,12 @@ class Html5Parser {
             return;
         }
 
-        parse_a(node);
-        // TODO: Add more tag parsers
+        parse_attr(node, GUMBO_TAG_A, "href");
+        parse_attr(node, GUMBO_TAG_IMG, "src");
+        parse_attr(node, GUMBO_TAG_LINK, "href");
+        parse_attr(node, GUMBO_TAG_SCRIPT, "src");
+        // TODO: probably missed some, check with html5 spec
+        // FIXME: handle base tag
 
         GumboVector* children = &node->v.element.children;
         for (unsigned int i = 0; i < children->length; ++i) {
@@ -168,14 +172,14 @@ class Html5Parser {
         }
     }
 
-    void parse_a(GumboNode *node) {
-        if (node->v.element.tag != GUMBO_TAG_A) {
+    void parse_attr(GumboNode *node, const GumboTag t, const char* attr) {
+        if (node->v.element.tag != t) {
             return;
         }
 
-        GumboAttribute* href;
-        if ((href = gumbo_get_attribute(&node->v.element.attributes, "href"))) {
-            relative_urls.push_back(Uri(href->value));
+        GumboAttribute* gattr;
+        if ((gattr = gumbo_get_attribute(&node->v.element.attributes, attr))) {
+            relative_urls.push_back(Uri(gattr->value));
         }
     }
 
