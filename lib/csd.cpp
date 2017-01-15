@@ -64,18 +64,23 @@ class Uri {
     string get_absolute(string base) {
         return get_absolute(Uri(base));
     }
+
+    void print_dbg() {
+        cout
+            << scheme << " " << is_prl << " " << is_abs << " " << host.empty()
+            << endl
+            << str << endl << endl;
+    }
+
     /**
      * \param[in] base uri of the page to resolve relative links against.
      *   eg.: Uri("foo").get_absolute("http://example.com") == "http://example.com/foo"
      */
     string get_absolute(const Uri base) const {
+        // FIXME: drop fragments
         // TODO: cover by unit tests
         if (!scheme.empty()) {
             return str;
-        }
-
-        if (!is_abs) {
-            return base.str + "/" + str;
         }
 
         if (is_prl) {
@@ -84,6 +89,11 @@ class Uri {
             // to me.
             return base.scheme + ":" + str;
         }
+
+        if (!is_abs) {
+            return base.str + "/" + str;
+        }
+
 
         if (host.empty()) {
             return base.scheme + "://" + base.host + str;
