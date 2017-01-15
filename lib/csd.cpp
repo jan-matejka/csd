@@ -4,6 +4,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <thread>
 #include <vector>
 #include <set>
 
@@ -248,6 +249,9 @@ OriginUrl::OriginUrl(const string url) : File(url), urls(parse_urls()) {}
 vector<File> OriginUrl::fetch_files() {
     vector<future<File>> futures;
 
+    // TODO: maybe some controll on how many threads is spawned?
+    // download will be IO bound so that's ok but the hash calculation
+    // should probably be at ncores.
     for (const auto &x : urls) {
         auto f(std::async([] (string url) -> File
             { return File(url); }, x));
@@ -263,8 +267,9 @@ vector<File> OriginUrl::fetch_files() {
                 futures.erase(futures.begin() + i);
             }
         }
-    }
 
+        this_thread::sleep_for(chrono::seconds(0));
+    }
 
     return files;
 }
