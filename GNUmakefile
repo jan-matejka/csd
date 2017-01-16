@@ -1,14 +1,39 @@
 .DEFAULT_GOAL := build
-C++ ?= g++
+CXX ?= c++
+
+PREFIX ?= /usr/local
+LIBDIR ?= $(PREFIX)/lib
 
 .PHONY: build
-build:
-
-	make -C lib/ $@
-	make -C src/ $@
+build: libcsd.so csd
 
 .PHONY: install
 install:
 
-	make -C lib/ $@
-	make -C src/ $@
+	install -m755 lib/libcsd.so $(DESTDIR)$(LIBDIR)
+	install -m755 src/csd $(DESTDIR)$(BINDIR)
+
+.PHONY: clean
+clean:
+
+	$(RM) libcsd.so
+	$(RM) csd
+
+libcsd.so: lib/csd.cpp GNUmakefile
+
+	$(CXX) -std=gnu++11 $(CFLAGS) \
+		-fPIC \
+		-lcurl \
+		-lpthread \
+		$(shell pkg-config --cflags --libs libcrypto++) \
+		$(shell pkg-config --cflags --libs gumbo) \
+		$(shell pkg-config --cflags --libs liburiparser) \
+		$(shell pkg-config --cflags --libs curlpp) \
+		-Wall -Wextra -shared $< -o $@
+
+csd: src/csd.cpp GNUmakefile
+
+	$(CXX) -std=gnu++11 $(CFLAGS) \
+		-L. -I./lib -lcsd \
+		-Wl,-rpath='$$ORIGIN/../lib' \
+		-Wall -Wextra $< -o $@
