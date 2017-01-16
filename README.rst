@@ -13,3 +13,4 @@ Dependencies
 * https://github.com/google/gumbo-parser
 * http://uriparser.sourceforge.net/
 * https://github.com/weidai11/cryptopp
+* http://www.boost.org/
