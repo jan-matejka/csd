@@ -7,6 +7,10 @@ LIBDIR ?= $(PREFIX)/lib
 .PHONY: build
 build: libcsd.so
 
+.PHONY: clean
+clean:
+	$(RM) libcsd.so
+
 libcsd.so: csd.cpp GNUmakefile
 
 	$(CXX) -std=gnu++11 $(CFLAGS) \

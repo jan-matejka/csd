@@ -7,6 +7,10 @@ BINDIR ?= $(PREFIX)/bin
 .PHONY: build
 build: csd
 
+.PHONY: clean
+clean:
+	$(RM) csd
+
 csd: csd.cpp GNUmakefile
 
 	$(CXX) -std=gnu++11 $(CFLAGS) \

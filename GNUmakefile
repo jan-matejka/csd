@@ -2,13 +2,9 @@
 CXX ?= c++
 
 .PHONY: build
-build:
-
-	$(MAKE) -C lib/ $@
-	$(MAKE) -C src/ $@
-
+.PHONY: clean
 .PHONY: install
-install:
+build clean install:
 
 	$(MAKE) -C lib/ $@
 	$(MAKE) -C src/ $@
