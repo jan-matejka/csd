@@ -3,6 +3,7 @@ CXX ?= c++
 
 PREFIX ?= /usr/local
 LIBDIR ?= $(PREFIX)/lib
+BINDIR ?= $(PREFIX)/bin
 
 .PHONY: build
 build: libcsd.so csd
@@ -10,8 +11,8 @@ build: libcsd.so csd
 .PHONY: install
 install:
 
-	install -m755 lib/libcsd.so $(DESTDIR)$(LIBDIR)
-	install -m755 src/csd $(DESTDIR)$(BINDIR)
+	install -m755 libcsd.so $(DESTDIR)$(LIBDIR)
+	install -m755 csd $(DESTDIR)$(BINDIR)
 
 .PHONY: clean
 clean:
