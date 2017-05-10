@@ -13,6 +13,11 @@ using namespace std;
 class File {
     public:
     /**
+     * Downloads and hashes the file from `url`
+     */
+    File(const string url);
+
+    /**
      * Source url
      */
     const string url;
@@ -31,26 +36,9 @@ class File {
     const string name;
 
     /**
-     * Downloads and hashes the file from `url`
-     */
-    File(const string url);
-
-    /**
      * \returns true if data of x < data of y
      */
     bool static size_cmp(File x, File y);
-
-    private:
-    string download_url(const string url) const;
-    string mk_hash() const;
-    string mk_fname() const;
-};
-
-class OriginUrl : public File {
-    public:
-    const set<string> urls;
-
-    OriginUrl(const string url);
 
     /**
      * \returns Files found in this file/url. fetches the files in
@@ -59,7 +47,11 @@ class OriginUrl : public File {
     vector<File> fetch_files();
 
     private:
+    string download_url(const string url) const;
+    string mk_hash() const;
+    string mk_fname() const;
     set<string> parse_urls() const;
+    const set<string> urls;
 };
 
 #endif

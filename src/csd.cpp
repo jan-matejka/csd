@@ -51,7 +51,7 @@ int main(int argc, char* argv[]) {
     }
 
     try {
-        auto origin = OriginUrl(url);
+        auto origin = File(url);
         auto files = origin.fetch_files();
         for(auto &file : files) {
             cout
